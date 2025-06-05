@@ -1,4 +1,4 @@
-FILES	=	Pratt.c
+FILES	=	Pratt.c singleton.c utils.c
 SRC_DIR	=	srcs
 SRCS	=	$(addprefix $(SRC_DIR)/, $(FILES))
 OBJ_DIR	=	.objs
@@ -10,13 +10,14 @@ CFLAGS	=	-g3
 DEBUG	=	-fsanitize=address
 RM		=	/bin/rm -rf
 LDFLAGS	=	-lreadline
+HEADER	=	includes/Pratt.h
 
 all:		$(NAME)
 
 $(NAME):	$(OBJS)
 		$(CC) $(CFLAGS) $(OBJS) $(LDFLAGS) -o $(NAME)
 
-$(OBJ_DIR)/%.o:	$(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o:	$(SRC_DIR)/%.c $(HEADER)
 		@mkdir -p $(OBJ_DIR)
 		$(CC) $(CFLAGS) -c $< -o $@
 

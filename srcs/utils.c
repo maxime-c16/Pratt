@@ -1,40 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   singleton.c                                        :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/04 16:39:31 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 12:17:55 by macauchy         ###   ########.fr       */
+/*   Created: 2025/06/05 12:07:14 by macauchy          #+#    #+#             */
+/*   Updated: 2025/06/05 12:11:33 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Pratt.h"
 
-void	ft_bzero(void *s, size_t n)
+void	*ft_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {
-	size_t	i;
-	char	*ptr;
+	void	*new_ptr;
 
-	ptr = (char *)s;
-	i = 0;
-	while (i < n)
+	if (new_size == 0)
 	{
-		ptr[i] = 0;
-		i++;
+		free(ptr);
+		return (NULL);
 	}
-}
-
-t_minishell	*_minishell(void)
-{
-	static t_minishell	minishell;
-	static bool			init = false;
-
-	if (!init)
+	new_ptr = malloc(new_size);
+	if (!new_ptr)
+		return (NULL);
+	if (ptr)
 	{
-		ft_bzero(&minishell, sizeof(t_minishell));
-		init = true;
+		if (old_size < new_size)
+			memcpy(new_ptr, ptr, old_size);
+		else
+			memcpy(new_ptr, ptr, new_size);
+		free(ptr);
 	}
-	return (&minishell);
+	return (new_ptr);
 }

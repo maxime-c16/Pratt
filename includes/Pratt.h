@@ -6,7 +6,7 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 16:19:16 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/04 16:39:23 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/05 12:47:31 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ typedef struct s_token
 typedef struct s_cmd
 {
 	char			**args;
+	char			*cmdpath;
 	t_redir			*redirs;
 	struct s_cmd	*next;
 }				t_cmd;
@@ -75,32 +76,35 @@ typedef struct s_ast
 		struct s_ast_cmd
 		{
 			char		**args;
-		} t_ast_cmd;
+		} cmd;
 		struct s_ast_pipe
 		{
 			struct s_ast	*left;
 			struct s_ast	*right;
-		} t_ast_pipe;
+		} pipe;
 		struct s_ast_redir
 		{
 			t_token_type	type;
 			char			*target;
 			struct s_ast	*child;
-		} t_ast_redir;
+		} redir;
 		struct s_ast_subshell
 		{
 			struct s_ast	*sub;
-		} t_ast_subshell;
+		} subshell;
 	} ast;
 }				t_ast;
 
 typedef struct s_minishell
 {
-	t_token		*tokens;
+	t_token			*tokens;
+	char			**cmds;
 	unsigned int	pos;
-	int		exit_status;
+	int				exit_status;
 }				t_minishell;
 
 t_minishell	*_minishell(void);
+void		*ft_realloc(void *ptr, unsigned int old_size, \
+		unsigned int new_size);
 
 #endif

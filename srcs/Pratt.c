@@ -6,7 +6,7 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 13:27:47 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 13:02:15 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/05 14:25:07 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ static char	*extract_word(const char *line, unsigned int *i)
 	while (line[*i] && !ft_isspace(line[*i])
 		&& line[*i] != '>' && line[*i] != '<'
 		&& line[*i] != '|' && line[*i] != '(' && line[*i] != ')'
-		&& line[*i] != ';')
+		&& line[*i] != ';' && line[*i] != '\'' && line[*i] != '"')
 		(*i)++;
 	len = *i - start;
 	if (len == 0)

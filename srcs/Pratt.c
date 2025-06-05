@@ -6,7 +6,7 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 13:27:47 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 14:25:07 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/05 18:41:18 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	ft_isspace(char c)
 			c == '\v' || c == '\f');
 }
 
-static void	append_token(unsigned int *cap, unsigned int *c, char *new_tok)
+void	append_token(unsigned int *cap, unsigned int *c, char *new_tok)
 {
 	t_minishell	*m;
 
@@ -103,11 +103,15 @@ static char	*collect_quoted(const char *str, char quote, bool *unclosed)
 	if (str[end] != quote)
 	{
 		*unclosed = true;
+		// free_tokens(_minishell()->cmds);
 		return (NULL);
 	}
 	buff = malloc(end);
 	if (!buff)
+	{
+		free_tokens(_minishell()->cmds);
 		return (NULL);
+	}
 	copy_quoted_content(str, quote, end, buff);
 	return (buff);
 }
@@ -193,10 +197,10 @@ static bool	handle_quote(unsigned int *cap, unsigned int *count,
 	if (unclosed || !qstr)
 	{
 		dprintf(2, "Error: Unclosed quote '%c'\n", quote);
-		free_tokens(arr);
+		_minishell()->early_error = true;
 		return (false);
 	}
-	skip_len = strlen(qstr) + 2;
+	skip_len = ft_strlen(qstr) + 2;
 	append_token(cap, count, qstr);
 	*i += skip_len;
 	return (true);
@@ -270,6 +274,7 @@ char	**split_on_whitespace(char *line)
 	minishell->cmds = malloc(sizeof(char *) * (cap));
 	if (!minishell->cmds)
 		return (NULL);
+	ft_bzero(minishell->cmds, sizeof(char *) * cap);
 	while (line[i])
 	{
 		skip_whitespace(line, &i);
@@ -307,6 +312,8 @@ int	main(int ac, char **av)
 	char	*line;
 	char	**words;
 
+	do
+	{
 	line = readline("Pratt> ");
 	if (!line)
 	{
@@ -314,6 +321,8 @@ int	main(int ac, char **av)
 		return (1);
 	}
 	words = split_on_whitespace(line);
-	print_tokens(words);
+	// print_tokens(words);
+	_minishell()->tokens = tokenize_to_pratt(words);
+	} while (!(_minishell()->early_error || _minishell()->error));
 	return (0);
 }

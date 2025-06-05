@@ -6,7 +6,7 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 16:19:16 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 12:47:31 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/05 18:11:35 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef enum e_token_type
 	TK_HEREDOC,
 	TK_LPAREN,
 	TK_RPAREN,
+	TK_SEMICOLON,
 	TK_EOF,
 	TK_ERROR
 }				t_token_type;
@@ -101,10 +102,22 @@ typedef struct s_minishell
 	char			**cmds;
 	unsigned int	pos;
 	int				exit_status;
+	bool			early_error;
+	bool			error;
 }				t_minishell;
 
 t_minishell	*_minishell(void);
-void		*ft_realloc(void *ptr, unsigned int old_size, \
+void	ft_bzero(void *s, size_t n);
+int		ft_strlen(const char *s);
+int		ft_strcmp(const char *s1, const char *s2);
+char	*ft_strndup(char *str, unsigned int len);
+void	*ft_realloc(void *ptr, unsigned int old_size,
 		unsigned int new_size);
+void	append_token(unsigned int *cap, unsigned int *c, char *new_tok);
+
+// debug
+
+void	print_token_array(t_token *tokens);
+t_token	*tokenize_to_pratt(char **cmds);
 
 #endif

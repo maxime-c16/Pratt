@@ -6,11 +6,31 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 12:07:14 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 12:11:33 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/05 14:57:19 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Pratt.h"
+
+int	ft_strlen(const char *s)
+{
+	int	len;
+
+	len = 0;
+	while (s[len])
+		len++;
+	return (len);
+}
+
+int	ft_strcmp(const char *s1, const char *s2)
+{
+	while (*s1 && *s2 && *s1 == *s2)
+	{
+		s1++;
+		s2++;
+	}
+	return ((unsigned char)*s1 - (unsigned char)*s2);
+}
 
 void	*ft_realloc(void *ptr, unsigned int old_size, unsigned int new_size)
 {

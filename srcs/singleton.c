@@ -6,24 +6,23 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/04 16:39:31 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 12:17:55 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/05 18:19:57 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Pratt.h"
 
-void	ft_bzero(void *s, size_t n)
+void	ft_bzero(void *b, size_t n)
 {
-	size_t	i;
-	char	*ptr;
+	unsigned char	*ptr;
 
-	ptr = (char *)s;
-	i = 0;
-	while (i < n)
+	ptr = (unsigned char *)b;
+	while (n)
 	{
-		ptr[i] = 0;
-		i++;
+		*ptr++ = 0;
+		n--;
 	}
+	return ;
 }
 
 t_minishell	*_minishell(void)

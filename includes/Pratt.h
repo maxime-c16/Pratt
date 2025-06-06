@@ -6,7 +6,7 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 16:19:16 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 18:11:35 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/06 11:58:05 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ typedef enum e_token_type
 	TK_LPAREN,
 	TK_RPAREN,
 	TK_SEMICOLON,
+	TK_AND,
+	TK_OR,
+	TK_DUP_IN,
+	TK_DUP_OUT,
+	TK_BACKGROUND,
+	TK_HERESTRING,
 	TK_EOF,
 	TK_ERROR
 }				t_token_type;

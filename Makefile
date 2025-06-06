@@ -1,4 +1,5 @@
-FILES	=	Pratt.c singleton.c utils.c tokenizer.c debug.c
+FILES	=	Pratt.c singleton.c utils.c tokenizer.c debug.c tokenizer_utils.c	\
+			utils2.c parse_expr.c parser_utils.c parse_prefix.c parse_infix.c
 SRC_DIR	=	srcs
 SRCS	=	$(addprefix $(SRC_DIR)/, $(FILES))
 OBJ_DIR	=	.objs
@@ -6,7 +7,7 @@ OBJS	=	$(addprefix $(OBJ_DIR)/, $(FILES:.c=.o))
 
 NAME	=	Pratt
 CC		=	gcc
-CFLAGS	=	-g3 
+CFLAGS	=	-g3 -Wall -Wextra
 DEBUG	=	-fsanitize=address
 RM		=	/bin/rm -rf
 LDFLAGS	=	-lreadline

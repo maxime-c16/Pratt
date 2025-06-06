@@ -6,7 +6,7 @@
 /*   By: macauchy <macauchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/03 13:27:47 by macauchy          #+#    #+#             */
-/*   Updated: 2025/06/05 18:41:18 by macauchy         ###   ########.fr       */
+/*   Updated: 2025/06/06 17:54:06 by macauchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ static char	*collect_quoted(const char *str, char quote, bool *unclosed)
 	if (str[end] != quote)
 	{
 		*unclosed = true;
-		// free_tokens(_minishell()->cmds);
 		return (NULL);
 	}
 	buff = malloc(end);
@@ -145,12 +144,16 @@ static char	*extract_operator(const char *line, unsigned int *i)
 	op_len = 1;
 	op_token = NULL;
 	if ((line[*i] == '>' && line[*i + 1] == '>') \
-		|| (line[*i] == '<' && line[*i + 1] == '<'))
+		|| (line[*i] == '<' && line[*i + 1] == '<')
+		|| (line[*i] == '|' && line[*i + 1] == '|')
+		|| (line[*i] == '&' && line[*i + 1] == '&')
+		|| (line[*i] == '>' && line[*i + 1] == '&')
+		|| (line[*i] == '<' && line[*i + 1] == '&'))
 		op_len = 2;
 	op_token = malloc(op_len + 1);
 	if (!op_token)
 		return (NULL);
-	memcpy(op_token, line + *i, op_len);
+	ft_memcpy(op_token, line + *i, op_len);
 	op_token[op_len] = '\0';
 	*i += op_len;
 	return (op_token);
@@ -176,7 +179,7 @@ static char	*extract_word(const char *line, unsigned int *i)
 	token = malloc(len + 1);
 	if (!token)
 		return (NULL);
-	memcpy(token, line + start, len);
+	ft_memcpy(token, line + start, len);
 	token[len] = '\0';
 	return (token);
 }
@@ -251,7 +254,8 @@ static bool	process_token(unsigned int *cap, unsigned int *count, char *line,
 	{
 		handle_word(cap, count, line, i);
 		if (line[*i] == '>' || line[*i] == '<' || line[*i] == '|'
-			|| line[*i] == '(' || line[*i] == ')' || line[*i] == ';')
+			|| line[*i] == '(' || line[*i] == ')' || line[*i] == ';'
+			|| line[*i] == '&')
 		{
 			if (!handle_operator(cap, count, line, i))
 				return (false);
@@ -312,8 +316,6 @@ int	main(int ac, char **av)
 	char	*line;
 	char	**words;
 
-	do
-	{
 	line = readline("Pratt> ");
 	if (!line)
 	{
@@ -323,6 +325,9 @@ int	main(int ac, char **av)
 	words = split_on_whitespace(line);
 	// print_tokens(words);
 	_minishell()->tokens = tokenize_to_pratt(words);
-	} while (!(_minishell()->early_error || _minishell()->error));
+	_minishell()->ast = parse_expression(0);
+	// print_minishell_state();
+	print_ast(_minishell()->ast, 0);
+	free_ast(_minishell()->ast);
 	return (0);
 }

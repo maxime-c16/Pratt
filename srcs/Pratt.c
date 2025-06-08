@@ -63,7 +63,7 @@ static unsigned int	find_closing_quote(const char *str, char quote)
 	i = 1;
 	while (str[i] && str[i] != quote)
 	{
-		if (str[i] == '\\' && quote == '"' && str[i + 1])
+		if (str[i] == '\\' && quote == '"' && str[i + 1] && str[i + 1] == '"')
 			i += 2;
 		else
 			i++;
@@ -81,8 +81,9 @@ static unsigned int	copy_quoted_content(const char *str, char quote, \
 	p = 0;
 	while (j < end)
 	{
-		if (str[j] == '\\' && quote == '"' && str[j + 1])
+		if (str[j] == '\\' && quote == '"' && str[j + 1] && strchr("\"\\$`", str[j + 1]))
 		{
+			_minishell()->escaped++;
 			j++;
 			buff[p++] = str[j++];
 		}
@@ -190,12 +191,10 @@ static bool	handle_quote(unsigned int *cap, unsigned int *count,
 	bool			unclosed;
 	char			quote;
 	char			*qstr;
-	char			**arr;
 	unsigned int	skip_len;
 
 	unclosed = false;
 	quote = line[*i];
-	arr = _minishell()->cmds;
 	qstr = collect_quoted(line + *i, quote, &unclosed);
 	if (unclosed || !qstr)
 	{
@@ -205,7 +204,7 @@ static bool	handle_quote(unsigned int *cap, unsigned int *count,
 	}
 	skip_len = ft_strlen(qstr) + 2;
 	append_token(cap, count, qstr);
-	*i += skip_len;
+	*i += skip_len + _minishell()->escaped;
 	return (true);
 }
 
@@ -311,23 +310,65 @@ void	print_tokens(char **tokens)
 	free(tokens);
 }
 
-int	main(int ac, char **av)
+void	free_token_array(void)
+{
+	t_minishell	*ms;
+	size_t		i;
+
+	ms = _minishell();
+	i = 0;
+	if (!ms->tokens)
+		return ;
+	while (ms->tokens[i].text)
+	{
+		free(ms->tokens[i].text);
+		i++;
+	}
+	free(ms->tokens);
+}
+
+void	free_ms_ctx(void)
+{
+	t_minishell	*ms;
+
+	ms = _minishell();
+	free_ast(ms->ast);
+	free_token_array();
+	ms->error = false;
+	ms->early_error = false;
+	ms->pos = 0;
+	ms->escaped = 0;
+}
+
+int	main(void)
 {
 	char	*line;
 	char	**words;
 
-	line = readline("Pratt> ");
-	if (!line)
+	line = NULL;
+	while (42)
 	{
-		write(2, "Error: Failed to read input\n", 28);
-		return (1);
+		line = readline("Pratt> ");
+		if (!line)
+		{
+			write(2, "Error: Failed to read input\n", 28);
+			return (1);
+		}
+		words = split_on_whitespace(line);
+		// print_tokens(words);
+		_minishell()->tokens = tokenize_to_pratt(words);
+		_minishell()->ast = parse_expression(0);
+		// print_minishell_state();
+		print_ast(_minishell()->ast, 0);
+		if (strcmp(_minishell()->cmds[0], "exit") == 0)
+		{
+			free_ms_ctx();
+			free_tokens(words);
+			break ;
+		}
+		free_ms_ctx();
+		free_tokens(words);
+		words = NULL;
 	}
-	words = split_on_whitespace(line);
-	// print_tokens(words);
-	_minishell()->tokens = tokenize_to_pratt(words);
-	_minishell()->ast = parse_expression(0);
-	// print_minishell_state();
-	print_ast(_minishell()->ast, 0);
-	free_ast(_minishell()->ast);
 	return (0);
 }

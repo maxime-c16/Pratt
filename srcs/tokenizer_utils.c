@@ -18,7 +18,7 @@ bool	is_fd_redirection(char **cmds, int i)
 		&& cmds[i + 1]
 		&& (!ft_strcmp(cmds[i + 1], ">&") || !ft_strcmp(cmds[i + 1], "<&"))
 		&& cmds[i + 2]
-		&& cmds[i + 2] != '\0');
+		&& *cmds[i + 2] != '\0');
 }
 
 void	handle_null_cmds(t_token **tokens, unsigned int *count,
@@ -70,7 +70,6 @@ int	process_fd_redirection(char **cmd, int i, t_token **tokens,
 {
 	t_token	new_token;
 	char	*joined;
-	size_t	len;
 
 	if (!cmd[i] || !cmd[i + 1])
 	{

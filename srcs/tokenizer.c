@@ -126,12 +126,14 @@ void	assign_token_type_and_bp(const char *word, t_token *token)
 
 bool	handle_token_error(const char *word, unsigned int i)
 {
-	if (!word[0])
+	/*if (!word[0])
 	{
 		_minishell()->early_error = true;
 		parse_error_at(word, i);
 		return (true);
-	}
+	}*/
+	(void)i;
+	(void)word;
 	return (false);
 }
 
@@ -159,14 +161,10 @@ t_token	*tokenize_to_pratt(char **cmds)
 		if (is_fd_redirection(cmds, i))
 		{
 			step = process_fd_redirection(cmds, i, &tokens, &count, &cap);
-			if (step < 0)
-				break ;
 			i += step;
 			continue ;
 		}
 		step = process_regular_token(cmds, i, &tokens, &count, &cap);
-		if (step < 0)
-			break ;
 		i += step;
 	}
 	finalize_token_array(&tokens, &count, &cap);

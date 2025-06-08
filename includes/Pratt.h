@@ -120,6 +120,7 @@ typedef struct s_minishell
 	bool			early_error;
 	bool			error;
 	t_ast			*ast;
+	size_t			escaped;
 }				t_minishell;
 
 t_minishell	*_minishell(void);

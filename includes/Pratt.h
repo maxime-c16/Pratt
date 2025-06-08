@@ -120,6 +120,7 @@ typedef struct s_minishell
 	bool			early_error;
 	bool			error;
 	t_ast			*ast;
+	t_cmd			*cmd_lst;
 	size_t			escaped;
 }				t_minishell;
 
@@ -182,5 +183,13 @@ t_ast	*parse_infix(t_ast *left, t_token *op);
 
 void	parser_error_at(t_token *tok, char *msg, char *tk_text);
 void	free_ast(t_ast *ast);
+void	free_tokens(char **tokens);
+void	free_cmdlst(t_cmd *cmd);
+
+// ast to list
+
+t_cmd	*new_cmd(void);
+char	**copy_args(char **src);
+t_cmd	*ast_to_cmd(t_ast *root);
 
 #endif

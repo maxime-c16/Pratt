@@ -14,7 +14,9 @@
 
 static char	**alloc_args(size_t cap)
 {
-	char	**args = malloc(sizeof(char *) * cap);
+	char	**args;
+
+	args = malloc(sizeof(char *) * cap);
 	if (!args)
 	{
 		dprintf(2, "Error: Memory allocation failed for command args\n");
@@ -23,18 +25,11 @@ static char	**alloc_args(size_t cap)
 	return (args);
 }
 
-static void	free_args(char **args, size_t count)
+static char	*dup_arg(char *text)
 {
-	size_t	i;
+	char	*arg;
 
-	for (i = 0; i < count; i++)
-		free(args[i]);
-	free(args);
-}
-
-static char	*dup_arg(const char *text)
-{
-	char	*arg = ft_strndup(text, ft_strlen(text));
+	arg = ft_strndup(text, ft_strlen(text));
 	if (!arg)
 	{
 		dprintf(2, "Error: Memory allocation failed for command arg\n");

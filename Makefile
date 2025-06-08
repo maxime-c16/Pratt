@@ -1,5 +1,6 @@
 FILES	=	Pratt.c singleton.c utils.c tokenizer.c debug.c tokenizer_utils.c	\
-			utils2.c parse_expr.c parser_utils.c parse_prefix.c parse_infix.c
+			utils2.c parse_expr.c parser_utils.c parse_prefix.c parse_infix.c	\
+			lst_utils.c
 SRC_DIR	=	srcs
 SRCS	=	$(addprefix $(SRC_DIR)/, $(FILES))
 OBJ_DIR	=	.objs

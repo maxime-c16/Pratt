@@ -332,8 +332,6 @@ void	free_ms_ctx(void)
 	t_minishell	*ms;
 
 	ms = _minishell();
-	free_ast(ms->ast);
-	free_token_array();
 	ms->error = false;
 	ms->early_error = false;
 	ms->pos = 0;
@@ -358,16 +356,19 @@ int	main(void)
 		// print_tokens(words);
 		_minishell()->tokens = tokenize_to_pratt(words);
 		_minishell()->ast = parse_expression(0);
-		// print_minishell_state();
 		print_ast(_minishell()->ast, 0);
+		_minishell()->cmd_lst = ast_to_cmd(_minishell()->ast);
+		// print_minishell_state();
 		if (strcmp(_minishell()->cmds[0], "exit") == 0)
 		{
 			free_ms_ctx();
 			free_tokens(words);
+			free_cmdlst(_minishell()->cmd_lst);
 			break ;
 		}
 		free_ms_ctx();
 		free_tokens(words);
+		free_cmdlst(_minishell()->cmd_lst);
 		words = NULL;
 	}
 	return (0);

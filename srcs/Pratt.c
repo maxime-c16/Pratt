@@ -284,7 +284,13 @@ char	**split_on_whitespace(char *line)
 		if (!line[i])
 			break ;
 		if (!process_token(&cap, &count, line, &i))
+		{
+			free(line);
+			free_token_array();
+			free_tokens(minishell->cmds);
+			minishell->cmds = NULL;
 			return (NULL);
+		}
 	}
 	free(line);
 	minishell->cmds[count] = NULL;
@@ -303,7 +309,6 @@ void	print_tokens(char **tokens)
 	}
 	while (tokens[i])
 	{
-		printf("Token[%u]: %s\n", i, tokens[i]);
 		free(tokens[i]);
 		i++;
 	}
@@ -332,6 +337,7 @@ void	free_ms_ctx(void)
 	t_minishell	*ms;
 
 	ms = _minishell();
+	free_token_array();
 	ms->error = false;
 	ms->early_error = false;
 	ms->pos = 0;
@@ -358,8 +364,11 @@ int	main(void)
 		_minishell()->ast = parse_expression(0);
 		print_ast(_minishell()->ast, 0);
 		_minishell()->cmd_lst = ast_to_cmd(_minishell()->ast);
+		free_ast(_minishell()->ast);
+		_minishell()->ast = NULL;
 		// print_minishell_state();
-		if (strcmp(_minishell()->cmds[0], "exit") == 0)
+		print_cmd_list(_minishell()->cmd_lst);
+		if (_minishell()->cmd_lst && strcmp(_minishell()->cmd_lst->args[0], "exit") == 0)
 		{
 			free_ms_ctx();
 			free_tokens(words);

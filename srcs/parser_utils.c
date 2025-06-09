@@ -76,4 +76,5 @@ void	free_ast(t_ast *ast)
 	{
 		free_ast(ast->ast.subshell.sub);
 	}
+	free(ast);
 }

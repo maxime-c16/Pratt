@@ -25,9 +25,12 @@ void	free_cmdlst(t_cmd *cmd)
 	next = NULL;
 	while (cmd)
 	{
-		next= cmd->next;
+		next = cmd->next;
 		if (cmd->args)
+		{
+			printf("freeing %s\n", cmd->args[0]);
 			free_tokens(cmd->args);
+		}
 		r = cmd->redirs;
 		while (r)
 		{
@@ -83,7 +86,6 @@ t_cmd	*flatten_pipe(t_ast *root)
 	while (it->next)
 		it = it->next;
 	it->next = r_lst;
-	free(root);
 	return (l_lst);
 }
 
@@ -106,11 +108,29 @@ t_ast	*gather_redirs(t_ast *node, t_redir **rlist)
 		r->next = *rlist;
 		*rlist = r;
 		child = node->ast.redir.child;
-		free(node->ast.redir.child);
-		free(node);
 		return (gather_redirs(child, rlist));
 	}
 	return (node);
+}
+
+t_cmd	*flatten_pipe_on_redir(t_ast *leaf, t_redir *redir_list)
+{
+	t_cmd	*pipe_list;
+	t_redir	*last;
+
+	last = NULL;
+	pipe_list = flatten_pipe(leaf);
+	if (!pipe_list)
+		return (NULL);
+	if (redir_list)
+	{
+		last = redir_list;
+		while (last->next)
+			last = last->next;
+		last->next = pipe_list->redirs;
+		pipe_list->redirs = redir_list;
+	}
+	return (pipe_list);
 }
 
 t_cmd	*switch_type(t_ast *root)
@@ -121,12 +141,16 @@ t_cmd	*switch_type(t_ast *root)
 
 	redir_lst = NULL;
 	leaf = gather_redirs(root, &redir_lst);
+	cmd = NULL;
+	if (!leaf)
+		return (NULL);
+	if (leaf->type == AST_PIPE)
+		return (flatten_pipe_on_redir(leaf, redir_lst));
 	cmd = new_cmd();
 	cmd->redirs = redir_lst;
 	if (leaf->type == AST_CMD)
 	{
 		cmd->args = copy_args(leaf->ast.cmd.args);
-		free_tokens(leaf->ast.cmd.args);
 	}
 	else if (leaf->type == AST_SUBSHELL)
 	{
@@ -135,11 +159,13 @@ t_cmd	*switch_type(t_ast *root)
 			return (NULL);
 		cmd->args[0] = ft_strndup("()", 2);
 		cmd->args[1] = NULL;
-		free_ast(leaf->ast.subshell.sub);
-		free(leaf);
 	}
 	else
-		free(leaf);
+	{
+		cmd->args = (char **)malloc(sizeof(char *));
+		if (!cmd->args)
+			return (NULL);
+	}
 	return (cmd);
 }
 
@@ -152,5 +178,6 @@ t_cmd	*ast_to_cmd(t_ast *root)
 	else if (root->type == AST_CMD || root->type == AST_SUBSHELL
 		|| root->type == AST_REDIR)
 		return (switch_type(root));
+	free_ast(root);
 	return (NULL);
 }

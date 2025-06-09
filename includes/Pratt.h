@@ -185,6 +185,7 @@ void	parser_error_at(t_token *tok, char *msg, char *tk_text);
 void	free_ast(t_ast *ast);
 void	free_tokens(char **tokens);
 void	free_cmdlst(t_cmd *cmd);
+void	free_token_array(void);
 
 // ast to list
 

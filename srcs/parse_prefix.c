@@ -108,6 +108,7 @@ static t_ast	*prefix_redir(t_token *tok)
 	if (!file_tok || file_tok->type != TK_WORD)
 	{
 		parser_error_at(tok, "Expected file name after redirection", tok->text);
+		free_tokens(_minishell()->cmds);
 		return (NULL);
 	}
 	cmd = parse_expression(0);

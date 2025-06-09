@@ -286,7 +286,6 @@ char	**split_on_whitespace(char *line)
 		if (!process_token(&cap, &count, line, &i))
 		{
 			free(line);
-			free_token_array();
 			free_tokens(minishell->cmds);
 			minishell->cmds = NULL;
 			return (NULL);
